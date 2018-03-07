@@ -10,17 +10,9 @@
           href="../../css/main.css"/>
 </head>
 <body>
-    <div class="container">
+    <div>
         <div class="starter-template">
             <h1>Online Shopping Basket</h1>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="starter-template">
-            <h2>
-                <span th:text="'Total: ' + ${total}"></span>
-            </h2>
         </div>
     </div>
 
@@ -30,10 +22,25 @@
         </ul>
     </div>
 
+    <div>
+        <span th:text="'Sub-Total: ' + ${subTotal}"></span>
+    </div>
+
     <form action="#" th:action="@{/items}" th:object="${item}" method="post">
-        <p>Message: <input type="text" th:field="*{name}" /></p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        <p>Select Item: <select th:field="*{name}">
+            <option value="default" th:text="'Select Item'"/>
+            <option value="Apple" th:text="'Apple'"/>
+            <option value="Bread" th:text="'Bread'"/>
+            <option value="Milk" th:text="'Milk'"/>
+            <option value="Soup" th:text="'Soup'"/>
+        </select>
+            <input type="submit" value="Submit" /></p>
     </form>
+
+    <form action="#" th:action="@{/checkout}" method="post">
+        <p><input type="submit" value="Checkout"/> </p>
+    </form>
+
 
 
     <script type="text/javascript"

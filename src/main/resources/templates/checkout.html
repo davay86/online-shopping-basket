@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Online Shopping Basket</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"
+          href="../../css/main.css"/>
+</head>
+<body>
+<div>
+    <div class="starter-template">
+        <h1>Online Shopping Basket</h1>
+    </div>
+</div>
+
+<div th:if="${list != null}">
+    <ul>
+        <li th:each="item : ${list}" th:text="${item}">Item description here...</li>
+    </ul>
+</div>
+
+<div>
+    <span th:text="'Sub-Total: ' + ${subTotal}"></span>
+</div>
+<div th:if="${appleSaving > 0}" >
+    <span th:text="'Apple offer Saving: ' + ${appleSaving}"></span>
+</div>
+<div th:if="${breadSaving > 0}">
+    <span th:text="'Bread soup Saving: ' + ${breadSaving}"></span>
+</div>
+<div>
+    <span th:text="'Total: ' + ${total}"></span>
+</div>
+
+<form action="#" th:action="@{/items}" method="Get">
+    <p><input type="submit" value="Back to shop"/> </p>
+</form>
+<script type="text/javascript"
+        src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

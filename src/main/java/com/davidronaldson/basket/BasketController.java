@@ -10,19 +10,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class BasketController {
 
-    BigDecimal total = new BigDecimal(0);
+    BigDecimal subTotal;
+    BigDecimal total;
+    BigDecimal appleSaving;
+    BigDecimal breadSaving;
 
-    List<String> items = new ArrayList<>();
+    List<Item> items;
 
     @RequestMapping("/items")
     public String greeting(Model model){
+        items = new ArrayList<>();
+        subTotal = new BigDecimal(0);
+        total = new BigDecimal(0);
+        appleSaving = new BigDecimal(0);
+        breadSaving = new BigDecimal(0);
         model.addAttribute("item",new Item());
         model.addAttribute("list",items);
-        model.addAttribute("total",total);
+        model.addAttribute("subTotal",subTotal);
         return "basket";
     }
 
@@ -30,29 +39,77 @@ public class BasketController {
     public String greetingSubmit(@ModelAttribute Item item, Model model) {
         addItem(item.getName());
         model.addAttribute("list", items);
-        model.addAttribute("total",total.setScale(2,BigDecimal.ROUND_HALF_UP));
+        model.addAttribute("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
         return "basket";
+    }
+
+    @PostMapping("/checkout")
+    public String checkout(Model model){
+        calculateOffers(items);
+        model.addAttribute("list", items);
+        model.addAttribute("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
+        model.addAttribute("total",total.setScale(2,BigDecimal.ROUND_HALF_UP));
+        model.addAttribute("appleSaving",appleSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
+        model.addAttribute("breadSaving",breadSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return "checkout";
     }
 
     private void addItem(String itemDesc){
         switch (itemDesc){
             case "Apple":
-                items.add(itemDesc);
-                total = total.add(new BigDecimal(0.99));
+                items.add(new Item("Apple",new BigDecimal(0.99)));
+                subTotal = subTotal.add(new BigDecimal(0.99));
                 break;
             case "Bread":
-                items.add(itemDesc);
-                total = total.add(new BigDecimal(1.49));
+                items.add(new Item("Bread", new BigDecimal(1.49)));
+                subTotal = subTotal.add(new BigDecimal(1.49));
                 break;
             case "Milk":
-                items.add(itemDesc);
-                total = total.add(new BigDecimal(0.89));
+                items.add(new Item("Milk", new BigDecimal(0.89)));
+                subTotal = subTotal.add(new BigDecimal(0.89));
                 break;
             case "Soup":
-                items.add(itemDesc);
-                total = total.add(new BigDecimal(1.25));
+                items.add(new Item("Soup", new BigDecimal(1.25)));
+                subTotal = subTotal.add(new BigDecimal(1.25));
             default:
                 break;
         }
+    }
+
+    private void calculateOffers(List<Item> items){
+        total = subTotal;
+        calculateAppleOffer(items.stream().filter(e -> e.getName().equals("Apple")).collect(Collectors.toList()));
+        calculateBreadSoupOffer(items);
+
+    }
+
+    private void calculateAppleOffer(List<Item> items){
+        Double appleSaving = items.stream().mapToDouble(e -> {
+            BigDecimal saving = e.getPrice().multiply(new BigDecimal(0.10));
+            total = total.subtract(saving);
+            return saving.doubleValue();
+        }).sum();
+
+        this.appleSaving = new BigDecimal(appleSaving);
+
+    }
+
+    private void calculateBreadSoupOffer(List<Item> items){
+        long numberOfBread = items.stream().filter(e -> e.getName().equals("Bread")).count();
+        long numberOfSoups = items.stream().filter(e -> e.getName().equals("Soup")).count();
+
+        double breadSaving = 0;
+        if(numberOfSoups !=0) {
+
+            if (numberOfBread != 0) {
+                long availableOffers = numberOfSoups / 2;
+                breadSaving = items.stream().filter(e -> e.getName().equals("Bread")).limit(availableOffers).mapToDouble(e -> {
+                    BigDecimal saving = e.getPrice().divide(new BigDecimal(2));
+                    total = total.subtract(saving);
+                    return saving.doubleValue();
+                }).sum();
+            }
+        }
+        this.breadSaving = new BigDecimal(breadSaving);
     }
 }
