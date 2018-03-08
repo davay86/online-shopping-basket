@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@SessionScope
 public class BasketController {
 
     BigDecimal subTotal;
@@ -21,37 +24,49 @@ public class BasketController {
     BigDecimal breadSaving;
 
     List<Item> items;
+    List<Item> availableItems;
 
     @RequestMapping("/items")
-    public String greeting(Model model){
+    public ModelAndView greeting(){
         items = new ArrayList<>();
+        availableItems = new ArrayList<>();
+        availableItems.add(new Item("Apple",new BigDecimal(.99)));
+        availableItems.add(new Item("Bread", new BigDecimal(1.49)));
+        availableItems.add(new Item("Milk", new BigDecimal(0.89)));
+        availableItems.add(new Item("Soup", new BigDecimal(1.25)));
         subTotal = new BigDecimal(0);
         total = new BigDecimal(0);
         appleSaving = new BigDecimal(0);
         breadSaving = new BigDecimal(0);
-        model.addAttribute("item",new Item());
-        model.addAttribute("list",items);
-        model.addAttribute("subTotal",subTotal);
-        return "basket";
+
+        ModelAndView modelAndView = new ModelAndView("basket");
+        modelAndView.addObject("item",new Item());
+        modelAndView.addObject("list",items);
+        modelAndView.addObject("subTotal",subTotal);
+        modelAndView.addObject("availableItems",availableItems);
+        return modelAndView;
     }
 
     @PostMapping("/items")
-    public String greetingSubmit(@ModelAttribute Item item, Model model) {
+    public ModelAndView greetingSubmit(@ModelAttribute Item item, Model model) {
         addItem(item.getName());
-        model.addAttribute("list", items);
-        model.addAttribute("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
-        return "basket";
+        ModelAndView modelAndView = new ModelAndView("basket");
+        modelAndView.addObject("list",items);
+        modelAndView.addObject("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return modelAndView;
     }
 
     @PostMapping("/checkout")
-    public String checkout(Model model){
+    public ModelAndView checkout(Model model){
         calculateOffers(items);
-        model.addAttribute("list", items);
-        model.addAttribute("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
-        model.addAttribute("total",total.setScale(2,BigDecimal.ROUND_HALF_UP));
-        model.addAttribute("appleSaving",appleSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
-        model.addAttribute("breadSaving",breadSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
-        return "checkout";
+        ModelAndView modelAndView = new ModelAndView("checkout");
+        modelAndView.addObject("list",items);
+        modelAndView.addObject("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
+        modelAndView.addObject("total",total.setScale(2,BigDecimal.ROUND_HALF_UP));
+        modelAndView.addObject("appleSaving",appleSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
+        modelAndView.addObject("breadSaving",breadSaving.setScale(2,BigDecimal.ROUND_HALF_UP));
+
+        return modelAndView;
     }
 
     private void addItem(String itemDesc){
@@ -80,7 +95,6 @@ public class BasketController {
         total = subTotal;
         calculateAppleOffer(items.stream().filter(e -> e.getName().equals("Apple")).collect(Collectors.toList()));
         calculateBreadSoupOffer(items);
-
     }
 
     private void calculateAppleOffer(List<Item> items){
@@ -91,7 +105,6 @@ public class BasketController {
         }).sum();
 
         this.appleSaving = new BigDecimal(appleSaving);
-
     }
 
     private void calculateBreadSoupOffer(List<Item> items){

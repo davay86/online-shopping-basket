@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Online Shopping Basket</title>
-
-    <link rel="stylesheet" type="text/css"
-          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"
-          href="../../css/main.css"/>
-</head>
+<head th:replace="/fragments/header :: header"></head>
 <body>
 <div>
     <div class="starter-template">
@@ -23,16 +15,16 @@
 </div>
 
 <div>
-    <span th:text="'Sub-Total: ' + ${subTotal}"></span>
+    <span th:text="'Sub-Total: £' + ${subTotal}"></span>
 </div>
 <div th:if="${appleSaving > 0}" >
-    <span th:text="'Apple offer Saving: ' + ${appleSaving}"></span>
+    <span th:text="'Apple offer Saving: £' + ${appleSaving}"></span>
 </div>
 <div th:if="${breadSaving > 0}">
-    <span th:text="'Bread soup Saving: ' + ${breadSaving}"></span>
+    <span th:text="'Bread soup Saving: £' + ${breadSaving}"></span>
 </div>
 <div>
-    <span th:text="'Total: ' + ${total}"></span>
+    <span th:text="'Total: £' + ${total}"></span>
 </div>
 
 <form action="#" th:action="@{/items}" method="Get">

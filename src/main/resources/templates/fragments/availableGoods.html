@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/header :: header"></head>
+<body>
+
+<div th:fragment="available-goods">
+    <div class="starter-template">
+        <h2>Available Items</h2>
+        <div th:if="${availableItems != null}">
+            <ul>
+                <li th:each="item : ${availableItems}" th:text="${item}">Item description here...</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
