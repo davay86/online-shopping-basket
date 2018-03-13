@@ -10,31 +10,50 @@
 
     <div th:include="/fragments/availableGoods :: available-goods" class="availableGoods"></div>
 
-    <div th:include="/fragments/selectedItems :: selected-goods"></div>
 
-    <div>
-        <span th:text="'Sub-Total: £' + ${subTotal}"></span>
-    </div>
+    <div id="selectedItems" ></div>
 
     <form action="#" th:action="@{/items}" th:object="${item}" method="post">
-        <p>Select Item: <select th:field="*{name}">
+        <p>Select Item: <select th:field="*{name}" id="itemSelect">
             <option value="default" th:text="'Select Item'"/>
             <option value="Apple" th:text="'Apple'"/>
             <option value="Bread" th:text="'Bread'"/>
             <option value="Milk" th:text="'Milk'"/>
             <option value="Soup" th:text="'Soup'"/>
         </select>
-            <input type="submit" value="Submit" /></p>
+            <button id="submit" type="button" onclick="addItem()">Add Item</button></p>
     </form>
 
     <form action="#" th:action="@{/checkout}" method="post">
         <p><input type="submit" value="Checkout"/> </p>
     </form>
 
-
-
     <script type="text/javascript"
-        src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script language="JavaScript" type="text/javascript" >
+        function addItem() {
+            var url = '/items';
+
+            if ($('#itemSelect').val() != '') {
+                var sendData={
+                    "name" : $('#itemSelect').val(),
+                    "price" : 0
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/items",
+                    async: true,
+                    data: sendData,
+                    success: function (result) {
+                        $('#selectedItems').load("getItems");
+                    }
+                })
+            }
+        }
+    </script>
+
+
 
 </body>
 </html>

@@ -47,12 +47,18 @@ public class BasketController {
         return modelAndView;
     }
 
+    @RequestMapping("/getItems")
+    public ModelAndView getItems(){
+        ModelAndView modelAndView = new ModelAndView("fragments/selectedItems :: selected-goods");
+        modelAndView.addObject("list", items);
+        modelAndView.addObject("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return modelAndView;
+    }
+
     @PostMapping("/items")
     public ModelAndView greetingSubmit(@ModelAttribute Item item, Model model) {
         addItem(item.getName());
         ModelAndView modelAndView = new ModelAndView("basket");
-        modelAndView.addObject("list",items);
-        modelAndView.addObject("subTotal",subTotal.setScale(2,BigDecimal.ROUND_HALF_UP));
         return modelAndView;
     }
 

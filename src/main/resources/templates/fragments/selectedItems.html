@@ -10,6 +10,9 @@
                 <li th:each="item : ${list}" th:text="${item}">Item description here...</li>
             </ul>
         </div>
+        <div>
+            <span th:text="'Sub-Total: £' + ${subTotal}"></span>
+        </div>
     </div>
 </div>
 
