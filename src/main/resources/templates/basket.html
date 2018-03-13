@@ -31,27 +31,7 @@
     <script type="text/javascript"
             src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script language="JavaScript" type="text/javascript" >
-        function addItem() {
-            var url = '/items';
 
-            if ($('#itemSelect').val() != '') {
-                var sendData={
-                    "name" : $('#itemSelect').val(),
-                    "price" : 0
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "/items",
-                    async: true,
-                    data: sendData,
-                    success: function (result) {
-                        $('#selectedItems').load("getItems");
-                    }
-                })
-            }
-        }
-    </script>
 
 
 

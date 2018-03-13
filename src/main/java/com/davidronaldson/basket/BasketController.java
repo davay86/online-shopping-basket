@@ -62,6 +62,12 @@ public class BasketController {
         return modelAndView;
     }
 
+    @PostMapping("/removeItem")
+    public String removeItem(@ModelAttribute Item item){
+        deleteItem(item);
+        return "basket";
+    }
+
     @PostMapping("/checkout")
     public ModelAndView checkout(Model model){
         calculateOffers(items);
@@ -95,6 +101,12 @@ public class BasketController {
             default:
                 break;
         }
+    }
+
+    private void deleteItem(Item item){
+        Item removeItem = items.stream().filter(e -> e.getName().equals(item.getName())).findFirst().get();
+        subTotal = subTotal.subtract(removeItem.getPrice());
+        items.remove(removeItem);
     }
 
     private void calculateOffers(List<Item> items){

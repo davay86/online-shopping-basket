@@ -9,6 +9,42 @@
     <link rel="stylesheet" th:href="@{/css/main.css}"
           href="../../css/main.css"/>
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script language="JavaScript" type="text/javascript" >
+        function addItem() {
+            if ($('#itemSelect').val() != '') {
+                var sendData={
+                    "name" : $('#itemSelect').val(),
+                    "price" : 0
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/items",
+                    async: true,
+                    data: sendData,
+                    success: function (result) {
+                        $('#selectedItems').load("getItems");
+                    }
+                })
+            }
+        }
+        function removeItem(e) {
+            var sendData={
+                "name" : e,
+                "price" : 0
+            }
+            $.ajax({
+                type: "POST",
+                url: "/removeItem",
+                async: true,
+                data: sendData,
+                success: function (result) {
+                    $('#selectedItems').load("getItems");
+                }
+            })
+        }
+    </script>
 </head>
 </html>

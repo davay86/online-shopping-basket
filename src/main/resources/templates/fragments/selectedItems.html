@@ -6,11 +6,15 @@
 <div th:fragment="selected-goods">
     <div class="starter-template">
         <div th:if="${list != null}">
-            <ul>
-                <li th:each="item : ${list}" th:text="${item}">Item description here...</li>
-            </ul>
+            <table>
+                <tr th:each="item : ${list}">
+                    <td th:text="${item.name}" th:id="${'itemname_'+(item)}"/>
+                    <td th:text="${'   --£'+(item.price)}" th:id="${'itemname_'+(item)}"/>
+                    <td><th:input id="submit" type="button" th:onclick="'removeItem(\''+${item.name}+'\');'" style="color: #FF0000; border: none; background: none; cursor: pointer;">X</th:input></td>
+                </tr>
+            </table>
         </div>
-        <div>
+        <div style="margin-top: 20px; margin-bottom: 10px;">
             <span th:text="'Sub-Total: £' + ${subTotal}"></span>
         </div>
     </div>
