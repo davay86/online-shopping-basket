@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -104,9 +105,11 @@ public class BasketController {
     }
 
     private void deleteItem(Item item){
-        Item removeItem = items.stream().filter(e -> e.getName().equals(item.getName())).findFirst().get();
-        subTotal = subTotal.subtract(removeItem.getPrice());
-        items.remove(removeItem);
+        Optional<Item> removeItem = items.stream().filter(e -> e.getName().equals(item.getName())).findFirst();
+        if(removeItem.isPresent()){
+            subTotal = subTotal.subtract(removeItem.get().getPrice());
+            items.remove(removeItem.get());
+        }
     }
 
     private void calculateOffers(List<Item> items){
